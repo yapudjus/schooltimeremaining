@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>login error</title>
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+</head>
+<body>
+    {% extends "navbar.html" %}
+    {% block content %}
+    <div class="title">
+        <p style="text-align: start; position: inherit">error during login</p>
+    </div>
+    <div class="normal-text">
+        <div class="start">
+            <p>if you see this page, then you probably didn't login or used the wrong username/password</p>
+            <a href="http://m.yapudjusowndomain.fr:800/login">click here to log in</a> 
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

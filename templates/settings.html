@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <title>settings</title>
+</head>
+<body>
+    {% extends "navbar.html" %}
+    {% block content %}
+    <div class="container">
+        <h1 class="cener" style="color: dimgrey;">edit settings</h1>
+        <br>
+        <form action="" method="post" class="login-form center">
+            <input id="edusername" type="text" placeholder="ecoledirecte username" name="edusername" value="{{request.form.username }}">
+            <input type="password" placeholder="ecoledirecte password" name="edpassword" value="{{request.form.password }}">
+            <input class="btn btn-default" type="submit" value="Login">
+        </form>
+        {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+            {% endif %}
+    </div>
+</body>
+</html>
+{% endblock %}

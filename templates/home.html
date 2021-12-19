@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>school remaining</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" , content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <script src="static/main.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    {% extends "navbar.html" %}
+    {% block content %}
+    <div>
+        <div class="title">
+            <p style="text-align: start; position: inherit">This is home page.</p>
+        </div>
+        <div class="normal-text">
+            <div class="start">
+                this website show you a nice progressbar for the ammount of time
+                remaining in the school year
+            </div>
+        </div>
+        <br>
+        <!-- <button onclick="update()">time based</button>  -->
+        <div id="Progress_Status">
+            <div id="myprogressBar" class={{ width }}></div>
+        </div>
+    </div>
+</body>
+
+</html>
+{% endblock %}
