@@ -4,27 +4,6 @@ from datetime import datetime, timedelta, date
 if not os.path.isdir('/tmp/schooltiming/'):
     os.system("mkdir /tmp/schooltiming/")
 
-def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
-    """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
-    """
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    return(f'\r{prefix} |{bar}| {percent}% {suffix}')
-    # Print New Line on Complete
-    if iteration == total: 
-        print()
-
 def write_json(new_data, filename):
     with open(filename, "r+") as file:
         data = json.load(file)
@@ -72,22 +51,40 @@ def get_data(username, password):
         data = json.load(f)
     return data
 
-def Get_time_table(token, account_type, id, start_date, end_date, username, hole='false'):
+def test_account(username, password) :
     os.system(
+        "curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={\"identifiant\": \"" +
+        username + "\", \"motdepasse\": \"" + password +
+        "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
+    )
+    with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f: data = json.load(f)
+    if test_token(data["token"]) == 200 :
+        return 200
+    else :
+        os.system(
+            "curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={\"identifiant\": \"" +
+            username + "\", \"motdepasse\": \"" + password +
+            "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
+        )
+        code = test_token(data["token"])
+        return code
+
+def Get_time_table(token, account_type, id, start_date, end_date, username, hole='false'):
+    command = (
         "curl -s --location -g -s --request POST \'https://api.ecoledirecte.com/v3/" + str(account_type) + "/" + str(id) + "/emploidutemps.awp?verbe=get\' --data-raw \'data={\"dateDebut\": \"" + str(
             start_date) + "\", \"dateFin\": \"" + str(end_date) + "\", \"avecTrous\": " + str(hole) + ", \"token\": \"" + str(token) + "\"}\' > /tmp/ecoledirecte/timetable" + username + ".json"
     )
+    os.system(command)
     with open('/tmp/ecoledirecte/timetable' + username + '.json') as f:
         timetable = json.load(f)
     return timetable
 
-def get_bar(username, password, year, dimension=50, method=1) :
+def get_bar(username, password, year, method=1) :
     """
     Return a progress bar of the current school year
     @params:
         username    - Required  : Ecoledirecte username (Str)
         password    - Required  : Ecoledirecte password (Str)
-        dimension   - Required  : character length of bar (Int) [default: 50]
         method      - Required  : style of the bar (0: hours based; 1:classes based) (Int) [default: 1]
         year        - Required  : start of school year (ex: for 2021-2022, enter 2021) (Int)
     """
@@ -110,7 +107,8 @@ def get_bar(username, password, year, dimension=50, method=1) :
         for x in range(len(tablenow["data"])):
             if str(tablenow["data"][x]["text"]) != 'CONGÉS' :
                 left += 1
-        return printProgressBar(iteration=(total-left), total=total, length=dimension, prefix=str('school is done at : '), suffix=str(' ' + str(total-left) + ' classes out of ' + str(total) + ' (' + str(left) + ' classes left)'), printEnd='\n')
+        percentage = ((total-left) / total) * 100
+        return [percentage, str(f'{total-left} classes out of {total} ({left} classes left)\t({percentage}%)')]
     if method == 0 :
         total = timedelta()
         for x in range(len(tablestart["data"])):
@@ -132,4 +130,5 @@ def get_bar(username, password, year, dimension=50, method=1) :
                     left += diff
         # return(f'{total-left} of class spent out of {total} ({left} left)')
         spent = total-left
-        return printProgressBar(iteration=(spent.total_seconds()), total=(total.total_seconds()), length=dimension, prefix=str('school is done at : '), suffix=str(' ' + str(spent) + ' of class out of ' + str(total) + ' (' + str(left) + ' of class left)'), printEnd='\n')
+        percentage = (spent.total_seconds() / (total.total_seconds())) * 100
+        return [percentage, str(f'{spent} of class out of {total} ({left} of class left)\t({percentage}%)')]

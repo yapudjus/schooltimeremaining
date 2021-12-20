@@ -13,11 +13,19 @@
     {% block content %}
     <div class="container">
         <h1 class="cener" style="color: dimgrey;">edit settings</h1>
+        <h2 class="center">logged in as {{loggedas}}</h2>
         <br>
         <form action="" method="post" class="login-form center">
-            <input id="edusername" type="text" placeholder="ecoledirecte username" name="edusername" value="{{request.form.username }}">
-            <input type="password" placeholder="ecoledirecte password" name="edpassword" value="{{request.form.password }}">
-            <input class="btn btn-default" type="submit" value="Login">
+            <p>password is required to make any changes</p>
+            <input type="password" placeholder="password" name="oldpassword" value="{{request.form.oldpassword }}">
+            <p>website account</p>
+            <input type="password" placeholder="new password" name="password1" value="{{request.form.password1 }}">
+            <input type="password" placeholder="confirm password" name="password2" value="{{request.form.password2 }}">
+            <input class="btn btn-default" type="submit" name="passwdchange" value="change password">
+            <p>ecoledirecte account</p>
+            <input type="text" placeholder="ecoledirecte username" name="edusername" value="{{request.form.edusername }}">
+            <input type="password" placeholder="ecoledirecte password" name="edpassword" value="{{request.form.edpassword }}">
+            <input class="btn btn-default" type="submit" name="edchange" value="change ecoledirecte account">
         </form>
         {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}

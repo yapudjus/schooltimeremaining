@@ -1,5 +1,6 @@
 body {
   font-family: Arial;
+  color-scheme: dark;
   background-color: #414141;
   color: #ffffff;
   padding: 50px;
@@ -27,7 +28,6 @@ li a {
   text-decoration: none;
 }
 
-/* Change the link color to #111 (black) on hover */
 li a:hover {
   background-color: #111;
 }
@@ -40,34 +40,38 @@ li a:hover {
 }
 
 .center {
-  position: inherit;
   width: 100%;
   text-align: center;
 }
 
 p {
   font-size: 20px;
+  color: rgb(75, 75, 75);
 }
 
 .container {
   background-color: rgb(219, 219, 219);
-  width: 80%;
+  width: 100%;
   border-radius: 15px;
 }
 
 #Progress_Status {
-  width: 50%;
-  background-color: #ddd;
+  width: 80%;
+  align-content: center;
+  align-self: center;
+  vertical-align: middle;
+  background-color: rgb(179, 179, 179);
 }
 
 #myprogressBar {
-  width: 1%;
   height: 35px;
   background-color: #4caf50;
   text-align: center;
   line-height: 32px;
   color: black;
 }
+
+
 
 * {
   box-sizing: border-box;
@@ -87,6 +91,26 @@ input {
   padding: 10px 0;
   width: 250px;
   transition: border 0.5s;
+}
+
+input:hover {
+  background-color: #c9c9c9;
+}
+
+.dropdown {
+  text-align: center;
+  background-color: #e2e2e2;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+}
+
+.dropdown:hover {
+  background-color: #c9c9c9;
 }
 
 .btn {
@@ -110,3 +134,16 @@ input {
   background-color: #2980b9;
 }
 
+.btn:active {
+  transform: scale(0.98);
+  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+}
+
+.col{
+  display:table-column;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}

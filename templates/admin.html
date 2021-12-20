@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <title>admin page</title>
+</head>
+<body>
+    {% extends "navbar.html" %}
+    {% block content %}
+    <div class="container">
+        <h2 class="center">logged in as {{loggedas}}</h2>
+        <br>
+        <form action="" method="post" class="login-form center">
+            <p>accounts</p>
+            <input type="username" placeholder="username" name="adusertname" value="{{request.form.adusername }}">
+            <input type="password" placeholder="password" name="adpassword" value="{{request.form.adpassword }}">
+            <input type="username" placeholder="ecoledirecte username" name="adedusername" value="{{request.form.adedusername }}">
+            <input type="password" placeholder="ecoledirecte password" name="adedpassword" value="{{request.form.adedpassword }}">
+            <select class="dropdown" name = "dropdown">
+                <option value = "user" selected>user</option>
+                <option value = "admin">admin</option>
+                <option value = "whore">whore</option>
+            </select>
+            <input type="submit" name="adduser" value="+">
+        </form>
+        {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+            {% endif %}
+    </div>
+</body>
+</html>
+{% endblock %}

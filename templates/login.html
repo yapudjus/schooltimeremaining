@@ -12,8 +12,8 @@
         <h1 class="cener" style="color: dimgrey;">Please login</h1>
         <br>
         <form action="" method="post" class="login-form center">
-            <input type="text" placeholder="Username" name="username" value="{{request.form.username }}">
-            <input type="password" placeholder="Password" name="password" value="{{request.form.password }}">
+            <input class="col" type="text" placeholder="Username" name="username" value="{{request.form.username }}">
+            <input class="col" type="password" placeholder="Password" name="password" value="{{request.form.password }}">
             <input class="btn btn-default" type="submit" value="Login">
         </form>
         {% if error %}

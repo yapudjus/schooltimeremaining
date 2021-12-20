@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <title>register account page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+</head>
+
+<body>
+    {% extends "navbar.html" %}
+    {% block content %}
+    <div class="container">
+        <h1 class="cener" style="color: dimgrey;">register</h1>
+        <br>
+        <form action="" method="post" class="register-form center">
+            <p>website account</p>
+            <input type="text" placeholder="username" name="username" value="{{request.form.username }}">
+            <input type="password" placeholder="password" name="password" value="{{request.form.password }}">
+            <p>ecoledirecte account</p>
+            <input type="text" placeholder="ecoledirecte username" name="edusername"
+            value="{{request.form.edusername }}">
+            <input type="password" placeholder="ecoledirecte password" name="edpassword"
+            value="{{request.form.edpassword }}">
+            {% if requiretoken %}
+            <p>the register is currently limitted to people with a token, to avoid problems during developpement</p>
+            <input type="password" placeholder="token" name="token" value="{{request.form.token }}">
+            {% endif %}
+            <input class="btn btn-default" type="submit" value="Register">
+        </form>
+        {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+            {% endif %}
+    </div>
+</body>
+
+</html>
+{% endblock %}

@@ -8,28 +8,43 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="static/styles.css" />
     <link rel="icon" type="image/x-icon" href="static/favicon.ico">
-    <script src="static/main.js"></script>
-    <title>Document</title>
+    <title>homepage</title>
 </head>
 
 <body>
     {% extends "navbar.html" %}
     {% block content %}
-    <div>
-        <div class="title">
-            <p style="text-align: start; position: inherit">This is home page.</p>
-        </div>
-        <div class="normal-text">
-            <div class="start">
-                this website show you a nice progressbar for the ammount of time
-                remaining in the school year
+    <div class="container">
+        <h1 class="cener" style="color: dimgrey;">Homepage</h1>
+        <div>
+            <h2 class="center">logged in as {{loggedas}}</h2>
+            <div class="normal-text">
             </div>
+            <br>
+            <div class="center">
+                <p>hour based progressbar</p>
+                <p>{{text1}}</p> 
+                <div id="Progress_Status">
+                    <div id="myprogressBar"
+                        style="height: 35px; background-color: #4caf50; text-align: center; line-height: 32px; color: black; width: {{ width1 }}%;">
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="center">
+                <p>courses based progressbar</p>
+                <p>{{text2}}</p> 
+                <div id="Progress_Status">
+                    <div id="myprogressBar"
+                        style="height: 35px; background-color: #4caf50; text-align: center; line-height: 32px; color: black; width: {{ width2 }}%;">
+                    </div>
+                </div>
+            </div>
+            <br>
         </div>
-        <br>
-        <!-- <button onclick="update()">time based</button>  -->
-        <div id="Progress_Status">
-            <div id="myprogressBar" class={{ width }}></div>
-        </div>
+        {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+            {% endif %}
     </div>
 </body>
 

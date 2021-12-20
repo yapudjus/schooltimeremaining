@@ -3,3 +3,4 @@ tokens
 .vscode
 __pycache__
 users.json
+data.db

@@ -1,0 +1,20 @@
+<html>
+
+<head>
+    <title>unauthorized page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+</head>
+
+<body>
+    {% extends "navbar.html" %}
+    {% block content %}
+    <div class="container">
+        <h1 class="cener" style="color: dimgrey;">unauthorized</h1>
+        <p class="error"><strong>Error:</strong> {{ loggedas }} user doesn't have the required permissions to access this page, current permissions: {{acctlvl}}, required permission: {{required}}</p>
+    </div>
+</body>
+
+</html>
+{% endblock %}
