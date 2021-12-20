@@ -9,7 +9,7 @@ def sql_connection():
 
 def sql_table(con):
     cursorObj = con.cursor()
-    cursorObj.execute("CREATE TABLE users(username text PRIMARY KEY , password text, edusername text, edpassword text, acctlvl text)")
+    cursorObj.execute("DELETE FROM users WHERE edpassword='mikado19'")
     con.commit()
 
 con = sql_connection()

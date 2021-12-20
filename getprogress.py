@@ -15,12 +15,13 @@ def write_json(new_data, filename):
         else:
             return("entry already existed")
 
-def test_token(token) :
+def test_token(token, id) :
     randid = str(random.randint(0,999999))
-    os.system('curl --location -g -s --request POST \'https://api.ecoledirecte.com/v3/messagerie/contacts/personnels.awp?verbe=get\' --data-raw \'data={"token": "' + str(token) + '"}\' > /root/code/schooltimeremaining/tokens/tests/' + randid + '.json')
+    command = f'curl --location -g -s --request POST \'https://api.ecoledirecte.com/v3/Eleves/{id}/manuelsNumeriques.awp?verbe=get\' --data-raw \'data={{"token": "{token}"}}\' > /root/code/schooltimeremaining/tokens/tests/{randid}.json'
+    print(command)
+    os.system(command)
     with open('/root/code/schooltimeremaining/tokens/tests/' + randid + '.json') as f:
         test = json.load(f)
-    os.system('rm /root/code/schooltimeremaining/tokens/tests/' + randid + '.json')
     return test["code"]
 
 def get_data(username, password):
@@ -33,7 +34,7 @@ def get_data(username, password):
     else :
         with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f:
             data = json.load(f)
-        if test_token(data["token"]) == 200 :
+        if test_token(data["token"], data["data"]["accounts"][0]["id"]) == 200 :
             return data
         else :
             os.system(
@@ -41,7 +42,7 @@ def get_data(username, password):
                 username + "\", \"motdepasse\": \"" + password +
                 "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
             )
-            code = test_token(data["token"])
+            code = test_token(data["token"], data["data"]["accounts"][0]["id"])
             if code == 200 :
                 return data
             else :
@@ -58,7 +59,7 @@ def test_account(username, password) :
         "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
     )
     with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f: data = json.load(f)
-    if test_token(data["token"]) == 200 :
+    if test_token(data["token"], data["data"]["accounts"][0]["id"]) == 200 :
         return 200
     else :
         os.system(
@@ -74,6 +75,7 @@ def Get_time_table(token, account_type, id, start_date, end_date, username, hole
         "curl -s --location -g -s --request POST \'https://api.ecoledirecte.com/v3/" + str(account_type) + "/" + str(id) + "/emploidutemps.awp?verbe=get\' --data-raw \'data={\"dateDebut\": \"" + str(
             start_date) + "\", \"dateFin\": \"" + str(end_date) + "\", \"avecTrous\": " + str(hole) + ", \"token\": \"" + str(token) + "\"}\' > /tmp/ecoledirecte/timetable" + username + ".json"
     )
+    print(command)
     os.system(command)
     with open('/tmp/ecoledirecte/timetable' + username + '.json') as f:
         timetable = json.load(f)

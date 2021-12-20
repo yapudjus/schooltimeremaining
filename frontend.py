@@ -11,7 +11,7 @@ from urllib.parse import urlparse, urljoin
 import sqlite3
 from sqlite3 import Error
 
-con = sqlite3.connect('data.db', check_same_thread=False)
+con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
 
 
 def sql_connection():
@@ -161,6 +161,7 @@ def home():
         edusername=user.get.edusername(session['user'])
         edpassword=user.get.edpassword(session['user'])
         code = test_account(username=edusername, password=edpassword)
+        width1, width2, text1, text2 = 0, 0, 'error', 'error'
         print(code)
         if code == 200 :
             width1, text1 = get_bar(username=edusername, password=edpassword, year=2021, method=0) #TODO: make the year part automatical
@@ -180,7 +181,7 @@ def login():
         else : error = user.exist(username=username)
         if error == None:
             session['user'] = username
-            return redirect(url_for('home'))
+            return redirect(url_for('settings'))
     return render_template('login.html', error=error)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -193,7 +194,7 @@ def register():
         edusername = request.form.get("edusername")
         edpassword = request.form.get("edpassword")
         token = request.form.get("token")
-        if (token != "yourmomisahoe" ) or not requiretoken: error = 'invalid token'
+        if (token != "158648234568" ) or not requiretoken: error = 'invalid token'
         elif user.exist(username) == True : error = 'username already exist'
         else:
             print(f'username={username}, password={password}, edusername={edusername}, edpassword={edpassword}')
@@ -229,7 +230,7 @@ def admin():
     if('user' in session and user.exist(session['user'])):
         if user.get.acctlvl(session['user']) == 'admin' :
             if request.method == 'POST':
-                if 'adduser' in request.form: user.add(username=request.form.get('addusername'), password=request.form.get('addpassword'), edusername=request.form.get('addedusername'), edpassword=request.form.get('addedpassword'), acctlvl=request.form.get('acctlvl'))
+                if 'adduser' in request.form: user.add(username=request.form.get('adusername'), password=request.form.get('adpassword'), edusername=request.form.get('adedusername'), edpassword=request.form.get('adedpassword'), acctlvl=request.form.get('dropdown'))
             return render_template("admin.html", error=e, loggedas=session['user'])
         return render_template("unauthorized.html", loggedas=session['user'], acctlvl=user.get.acctlvl(session['user']), required='admin')
     return render_template("loginerror.html")
