@@ -3,7 +3,6 @@ body {
   color-scheme: dark;
   background-color: #414141;
   color: #ffffff;
-  padding: 50px;
 }
 
 ul {
@@ -21,53 +20,39 @@ li {
 }
 
 li a {
-  display: block;
+  display: list-item;
   color: white;
   text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
 }
 
 li a:hover {
   background-color: #111;
 }
-
-.normal-text {
-  font-size: 18px;
-}
-.title {
-  font-size: 24px;
-}
-
 .center {
-  width: 100%;
   text-align: center;
 }
 
 p {
-  font-size: 20px;
   color: rgb(75, 75, 75);
 }
 
 .container {
   background-color: rgb(219, 219, 219);
-  width: 100%;
-  border-radius: 15px;
+  border-radius: 5%;
 }
 
 #Progress_Status {
-  width: 80%;
   align-content: center;
   align-self: center;
   vertical-align: middle;
   background-color: rgb(179, 179, 179);
+  border-radius: 15%;
 }
 
 #myprogressBar {
-  height: 35px;
   background-color: #4caf50;
   text-align: center;
-  line-height: 32px;
   color: black;
 }
 
@@ -84,13 +69,8 @@ p {
 input {
   text-align: center;
   background-color: #e2e2e2;
-  border: 2px solid transparent;
-  border-radius: 15px;
-  font-size: 16px;
-  font-weight: 200;
-  padding: 10px 0;
-  width: 250px;
   transition: border 0.5s;
+  border-radius: 5%;
 }
 
 input:hover {
@@ -100,13 +80,8 @@ input:hover {
 .dropdown {
   text-align: center;
   background-color: #e2e2e2;
-  border: 2px solid transparent;
-  border-radius: 15px;
-  font-size: 16px;
-  font-weight: 200;
-  padding: 10px 0;
-  width: 250px;
   transition: border 0.5s;
+  border-radius: 5%;
 }
 
 .dropdown:hover {
@@ -114,20 +89,14 @@ input:hover {
 }
 
 .btn {
-  border: 2px solid transparent;
   background: #3498db;
   color: #ffffff;
-  font-size: 16px;
-  line-height: 25px;
-  padding: 10px 0;
   text-decoration: none;
   text-shadow: none;
-  border-radius: 3px;
   box-shadow: none;
   transition: 0.25s;
   display: block;
-  width: 250px;
-  margin: 0 auto;
+  border-radius: 2%;
 }
 
 .btn:hover {

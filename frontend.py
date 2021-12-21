@@ -4,12 +4,13 @@ import json
 import sys
 import hashlib
 from getprogress import get_bar, test_account
-
+from flask_mobility import Mobility
 from flask import current_app
 import flask
 from urllib.parse import urlparse, urljoin
 import sqlite3
 from sqlite3 import Error
+import re
 
 con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
 
@@ -145,9 +146,18 @@ class user :
         def password(password) :
             return str(hashlib.sha256(password.encode()).hexdigest())
 
-app = Flask(__name__)
+def ismobile(useragent) :
+    MOBILE_REGEX = r'/Mobile|iP(hone|od|ad)|Android|BlackBerry|BB|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/gi'
+    if re.search(pattern=MOBILE_REGEX, string=useragent) != None: return True
+    else: return False
+
+def getcss(useragent) :
+    if ismobile(useragent): return '/static/mobile.css'
+    else: return '/static/desktop.css'
 
 app = Flask(__name__)
+Mobility(app)
+
 app.config['ENV'] = 'development'
 app.secret_key = 'thereoncewasashipthatputtosea'
 
@@ -167,7 +177,7 @@ def home():
             width1, text1 = get_bar(username=edusername, password=edpassword, year=2021, method=0) #TODO: make the year part automatical
             width2, text2 = get_bar(username=edusername, password=edpassword, year=2021, method=1) #TODO: meke this line and the above run faster (eg: caching)
         else : e = code 
-        return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'])
+        return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -182,7 +192,7 @@ def login():
         if error == None:
             session['user'] = username
             return redirect(url_for('settings'))
-    return render_template('login.html', error=error)
+    return render_template('login.html', error=error, css=getcss(request.headers.get('User-Agent')))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -200,7 +210,7 @@ def register():
             print(f'username={username}, password={password}, edusername={edusername}, edpassword={edpassword}')
             user.add(username=username, password=password, edusername=edusername, edpassword=edpassword)
             return redirect(url_for('login'))
-    return render_template('register.html', error=error ,requiretoken=requiretoken)
+    return render_template('register.html', error=error ,requiretoken=requiretoken, css=getcss(request.headers.get('User-Agent')))
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
@@ -218,8 +228,8 @@ def settings():
             if 'edchange' in request.form:
                 if 'edusername' in request.form : e= user.change.edusername(username=session['user'], password=password, edusername=edusername)
                 if 'edpassword' in request.form : e= user.change.edpassword(username=session['user'], password=password, edpassword=edpassword)
-        return render_template("settings.html", error=e, loggedas=session['user'])
-    return render_template("loginerror.html")
+        return render_template("settings.html", error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
+    return render_template("loginerror.html", css=getcss(request.headers.get('User-Agent')))
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -231,14 +241,14 @@ def admin():
         if user.get.acctlvl(session['user']) == 'admin' :
             if request.method == 'POST':
                 if 'adduser' in request.form: user.add(username=request.form.get('adusername'), password=request.form.get('adpassword'), edusername=request.form.get('adedusername'), edpassword=request.form.get('adedpassword'), acctlvl=request.form.get('dropdown'))
-            return render_template("admin.html", error=e, loggedas=session['user'])
-        return render_template("unauthorized.html", loggedas=session['user'], acctlvl=user.get.acctlvl(session['user']), required='admin')
-    return render_template("loginerror.html")
+            return render_template("admin.html", error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
+        return render_template("unauthorized.html", loggedas=session['user'], acctlvl=user.get.acctlvl(session['user']), required='admin', css=getcss(request.headers.get('User-Agent')))
+    return render_template("loginerror.html", css=getcss(request.headers.get('User-Agent')))
 
 @app.route('/logout')
 def logout():
     session.pop('user')
-    return render_template("logout.html")
+    return render_template("logout.html", css=getcss(request.headers.get('User-Agent')))
 
 #TODO: add contact page
 #TODO: add about page

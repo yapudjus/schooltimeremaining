@@ -1,0 +1,59 @@
+body {
+    padding: 0px;
+  }
+  
+  li a {
+    padding: 2px 4px;
+  }
+  
+  .normal-text {
+    font-size: 12px;
+  }
+  .title {
+    font-size: 15px;
+  }
+  
+  .center {
+    width: 100%;
+  }
+  
+  p {
+    font-size: 12px;
+  }
+  
+  .container {
+    width: 100%;
+  }
+  
+  #Progress_Status {
+    width: 100%;
+  }
+  
+  #myprogressBar {
+    height: 17px;
+    line-height: 15px;
+  }
+  
+  input {
+    border: 2px solid transparent;
+    font-size: 12px;
+    padding: 5px 0;
+    width: 100px;
+  }
+  
+  .dropdown {
+    border: 2px solid transparent;
+    font-size: 12px;
+    padding: 5px 0;
+    width: 100px;
+  }
+  
+  .btn {
+    border: 2px solid transparent;
+    font-size: 6px;
+    line-height: 5px;
+    padding: 5px 0;
+    transition: 0.25s;
+    width: 100px;
+    margin: 0 auto;
+  }
