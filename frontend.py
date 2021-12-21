@@ -250,7 +250,9 @@ def logout():
     return render_template("logout.html", css=getcss(request.headers.get('User-Agent')))
 
 #TODO: add contact page
-#TODO: add about page
+@app.route('/about')
+def about():
+    return render_template("about.html", css=getcss(request.headers.get('User-Agent')))
 
 if __name__ == "__main__":
     app.run(port=800, host='m.yapudjusowndomain.fr', debug=True)
