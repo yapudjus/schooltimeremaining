@@ -11,6 +11,7 @@ from urllib.parse import urlparse, urljoin
 import sqlite3
 from sqlite3 import Error
 import re
+import datetime
 
 con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
 
@@ -174,8 +175,10 @@ def home():
         width1, width2, text1, text2 = 0, 0, 'error', 'error'
         print(code)
         if code == 200 :
-            width1, text1 = get_bar(username=edusername, password=edpassword, year=2021, method=0) #TODO: make the year part automatical
-            width2, text2 = get_bar(username=edusername, password=edpassword, year=2021, method=1) #TODO: meke this line and the above run faster (eg: caching)
+            currentDateTime = datetime.datetime.now()
+            date = currentDateTime.date()
+            year = date.strftime("%Y")
+            width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))#TODO: make this line run faster (eg: caching)
         else : e = code 
         return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
     return redirect(url_for('login'))

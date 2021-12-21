@@ -81,13 +81,12 @@ def Get_time_table(token, account_type, id, start_date, end_date, username, hole
         timetable = json.load(f)
     return timetable
 
-def get_bar(username, password, year, method=1) :
+def get_bar(username, password, year) :
     """
     Return a progress bar of the current school year
     @params:
         username    - Required  : Ecoledirecte username (Str)
         password    - Required  : Ecoledirecte password (Str)
-        method      - Required  : style of the bar (0: hours based; 1:classes based) (Int) [default: 1]
         year        - Required  : start of school year (ex: for 2021-2022, enter 2021) (Int)
     """
     year = int(year)
@@ -99,38 +98,30 @@ def get_bar(username, password, year, method=1) :
     
     tablestart = Get_time_table(token=data["token"], account_type=data["data"]["accounts"][0]['typeCompte'], id=data["data"]["accounts"][0]['id'], start_date=start, end_date=end, username=username)
     tablenow = Get_time_table(token=data["token"], account_type=data["data"]["accounts"][0]['typeCompte'], id=data["data"]["accounts"][0]['id'], start_date=str(datetime.today()).split()[0], end_date=end, username=username)
-    
-    if method == 1 :
-        total = 0
-        for x in range(len(tablestart["data"])):
-            if str(tablestart["data"][x]["text"]) != 'CONGÉS' :
-                total += 1
-        left = 0
-        for x in range(len(tablenow["data"])):
-            if str(tablenow["data"][x]["text"]) != 'CONGÉS' :
-                left += 1
-        percentage = ((total-left) / total) * 100
-        return [percentage, str(f'{total-left} classes out of {total} ({left} classes left)\t({percentage}%)')]
-    if method == 0 :
-        total = timedelta()
-        for x in range(len(tablestart["data"])):
-            if str(tablestart["data"][x]["text"]) != 'CONGÉS' :
-                    start=tuple([int(i) for i in str(tablestart["data"][x]["start_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["start_date"])[:10].split('-')])+
-                    start = timedelta(hours=start[0], minutes=start[1])
-                    end=tuple([int(i) for i in str(tablestart["data"][x]["end_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["end_date"])[:10].split('-')])+
-                    end = timedelta(hours=end[0], minutes=end[1])
-                    diff = end - start
-                    total += diff
-        left = timedelta()
-        for x in range(len(tablenow["data"])):
-            if str(tablenow["data"][x]["text"]) != 'CONGÉS' :
-                    start=tuple([int(i) for i in str(tablenow["data"][x]["start_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["start_date"])[:10].split('-')])+
-                    start = timedelta(hours=start[0], minutes=start[1])
-                    end=tuple([int(i) for i in str(tablenow["data"][x]["end_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["end_date"])[:10].split('-')])+
-                    end = timedelta(hours=end[0], minutes=end[1])
-                    diff = end - start
-                    left += diff
-        # return(f'{total-left} of class spent out of {total} ({left} left)')
-        spent = total-left
-        percentage = (spent.total_seconds() / (total.total_seconds())) * 100
-        return [percentage, str(f'{spent} of class out of {total} ({left} of class left)\t({percentage}%)')]
+    total1 = 0
+    total2 = timedelta()
+    for x in range(len(tablestart["data"])):
+        if str(tablestart["data"][x]["text"]) != 'CONGÉS' :
+                total1 += 1
+                start2=tuple([int(i) for i in str(tablestart["data"][x]["start_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["start_date"])[:10].split('-')])+
+                start2 = timedelta(hours=start2[0], minutes=start2[1])
+                end2=tuple([int(i) for i in str(tablestart["data"][x]["end_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["end_date"])[:10].split('-')])+
+                end2 = timedelta(hours=end2[0], minutes=end2[1])
+                diff2 = end2 - start2
+                total2 += diff2
+    left1 = 0
+    left2 = timedelta()
+    for x in range(len(tablenow["data"])):
+        if str(tablenow["data"][x]["text"]) != 'CONGÉS' :
+                left1 += 1
+                start2=tuple([int(i) for i in str(tablenow["data"][x]["start_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["start_date"])[:10].split('-')])+
+                start2 = timedelta(hours=start2[0], minutes=start2[1])
+                end2=tuple([int(i) for i in str(tablenow["data"][x]["end_date"])[11:].split(':')]) # tuple([int(x) for x in str(tablestart["data"][x]["end_date"])[:10].split('-')])+
+                end2 = timedelta(hours=end2[0], minutes=end2[1])
+                diff2 = end2 - start2
+                left2 += diff2
+    # return(f'{total-left} of class spent out of {total} ({left} left)')
+    spent2 = total2-left2
+    percentage1 = ((total1-left1) / total1) * 100
+    percentage2 = (spent2.total_seconds() / (total2.total_seconds())) * 100
+    return [percentage1, str(f'{total1-left1} classes out of {total1} ({left1} classes left)\t({percentage1}%)'), percentage2, str(f'{spent2} of class out of {total2} ({left2} of class left)\t({percentage2}%)')]

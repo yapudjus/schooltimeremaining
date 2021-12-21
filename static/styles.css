@@ -39,7 +39,7 @@ p {
 
 .container {
   background-color: rgb(219, 219, 219);
-  border-radius: 5%;
+  border-radius: 15px;
 }
 
 #Progress_Status {
@@ -47,13 +47,14 @@ p {
   align-self: center;
   vertical-align: middle;
   background-color: rgb(179, 179, 179);
-  border-radius: 15%;
+  border-radius: 15px;
 }
 
 #myprogressBar {
   background-color: #4caf50;
   text-align: center;
   color: black;
+  border-radius: 15px
 }
 
 
@@ -70,7 +71,7 @@ input {
   text-align: center;
   background-color: #e2e2e2;
   transition: border 0.5s;
-  border-radius: 5%;
+  border-radius: 17px;
 }
 
 input:hover {
@@ -81,7 +82,7 @@ input:hover {
   text-align: center;
   background-color: #e2e2e2;
   transition: border 0.5s;
-  border-radius: 5%;
+  border-radius: 17px;
 }
 
 .dropdown:hover {
@@ -96,7 +97,6 @@ input:hover {
   box-shadow: none;
   transition: 0.25s;
   display: block;
-  border-radius: 2%;
 }
 
 .btn:hover {
