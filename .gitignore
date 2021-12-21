@@ -4,3 +4,4 @@ tokens
 __pycache__
 users.json
 data.db
+logs

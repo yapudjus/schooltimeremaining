@@ -1,46 +1,46 @@
-from logging import ERROR, error
-from flask import Flask, render_template, redirect, request, sessions, url_for, session, flash
-import json
-import sys
-import hashlib
-from getprogress import get_bar, test_account
-from flask_mobility import Mobility
-from flask import current_app
-import flask
+from flask import Flask, render_template, redirect, request, sessions, url_for, session, flash, current_app
+import hashlib, logging, sqlite3, re, datetime
 from urllib.parse import urlparse, urljoin
-import sqlite3
+from flask_mobility import Mobility
+from getprogress import get_bar
 from sqlite3 import Error
-import re
-import datetime
+
+app = Flask(__name__)
+Mobility(app)
+
+# app.config['ENV'] = 'production'
+# app.secret_key = 'thereoncewasashipthatputtosea'
 
 con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
 
-
 def sql_connection():
+    logger = logging.getLogger(__name__)
     try:
         con = sqlite3.connect(':memory:')
-        print("Connection is established: Database is created in memory")
-    except Error:
-        print(Error)
+        logger.info("Connection is established: Database is created in memory")
+    except Error as e:
+        logger.error(Error)
     finally:
         con.close()
-
 
 sql_connection()
 
 def is_safe_url(target):
+    logger = logging.getLogger(__name__)
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 class user :
     def getData(username) :
-        cursorObj = con.cursor()
+        logger = logging.getLogger(__name__)
+        cursorObj = con.cursor() 
         cursorObj.execute(f'SELECT username, password FROM users WHERE username == {username}')
         rows = cursorObj.fetchall()
         for row in rows: print(row)
     
     def add(username, password, edusername, edpassword, acctlvl='user') :
+        logger = logging.getLogger(__name__)
         cursorObj = con.cursor()
         # cursorObj.execute(f"INSERT INTO users VALUES({username}, {password}, {edusername}, {edpassword}, 'user')")
         entities = (username, user.encode.password(password), edusername, edpassword, acctlvl)
@@ -48,19 +48,18 @@ class user :
         con.commit()
     
     def exist(username) :
+        logger = logging.getLogger(__name__)
         cursorObj = con.cursor()
         cursorObj.execute(f"SELECT EXISTS(SELECT * FROM users WHERE username='{username}')")
         a= cursorObj.fetchall()
-        print(a)
         if a[0][0] == 1: 
-            print(f'user {username} exist')
             return True
         else : 
-            print(f'user {username} doesn\'t exist')
             return str(f'user {username} doesn\'t exist')
     
     class get :
         def password(username) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             cursorObj = con.cursor()
             cursorObj.execute(f"SELECT password FROM users WHERE username='{username}'")
@@ -68,6 +67,7 @@ class user :
             return rows[0][0]
         
         def acctlvl(username) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             cursorObj = con.cursor()
             cursorObj.execute(f"SELECT acctlvl FROM users WHERE username='{username}'")
@@ -75,6 +75,7 @@ class user :
             return rows[0][0]
         
         def edusername(username) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             cursorObj = con.cursor()
             cursorObj.execute(f"SELECT edusername FROM users WHERE username='{username}'")
@@ -82,6 +83,7 @@ class user :
             return rows[0][0]
         
         def edpassword(username) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             cursorObj = con.cursor()
             cursorObj.execute(f"SELECT edpassword FROM users WHERE username='{username}'")
@@ -90,6 +92,7 @@ class user :
 
         class all :
             def fromusername(username) :
+                logger = logging.getLogger(__name__)
                 if user.exist(username) != True: return 'user doesn\'t exist'
                 cursorObj = con.cursor()
                 cursorObj.execute(f"SELECT * FROM users WHERE username='{username}'")
@@ -97,6 +100,7 @@ class user :
                 return rows[0]
             
             def all() :
+                logger = logging.getLogger(__name__)
                 cursorObj = con.cursor()
                 cursorObj.execute(f"SELECT * FROM users")
                 rows = cursorObj.fetchall()
@@ -104,35 +108,39 @@ class user :
     
     class change :
         def password(username, newpassword, oldpassword='', Forced=False) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             if (user.check.password(username, oldpassword)) and Forced == False: return 'wrong password'
             cursorObj = con.cursor()
-            print(f"UPDATE users SET password='{user.encode.password(newpassword)}' where username='{username}'")
+            logger.debug(f"UPDATE users SET password='{user.encode.password(newpassword)}' where username='{username}'")
             cursorObj.execute(f"UPDATE users SET password='{user.encode.password(newpassword)}' where username='{username}'")
             con.commit()
         
         def acctlvl(username, password, acctlvl, Forced=False) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             if (user.check.password(username, password)) and Forced == False: return 'wrong password'
             if (user.get.acctlvl(username) != 'admin') and Forced == False: return 'unauthorized'
             cursorObj = con.cursor()
-            print(f"UPDATE users SET acctlvl='{acctlvl}' where username='{username}'")
+            logger.debug(f"UPDATE users SET acctlvl='{acctlvl}' where username='{username}'")
             cursorObj.execute(f"UPDATE users SET acctlvl='{acctlvl}' where username='{username}'")
             con.commit()
         
         def edusername(username, password, edusername, Forced=False) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             if (user.check.password(username, password)) and Forced == False: return 'wrong password'
             cursorObj = con.cursor()
-            print(f"UPDATE users SET edusername='{edusername}' where username='{username}'")
+            logger.debug(f"UPDATE users SET edusername='{edusername}' where username='{username}'")
             cursorObj.execute(f"UPDATE users SET edusername='{edusername}' where username='{username}'")
             con.commit()
         
         def edpassword(username, password, edpassword, Forced=False) :
+            logger = logging.getLogger(__name__)
             if user.exist(username) != True: return 'user doesn\'t exist'
             if (user.check.password(username, password)) and Forced == False: return 'wrong password'
             cursorObj = con.cursor()
-            print(f"UPDATE users SET edpassword='{edpassword}' where username='{username}'")
+            logger.debug(f"UPDATE users SET edpassword='{edpassword}' where username='{username}'")
             cursorObj.execute(f"UPDATE users SET edpassword='{edpassword}' where username='{username}'")
             con.commit()
         
@@ -156,17 +164,12 @@ def getcss(useragent) :
     if ismobile(useragent): return '/static/mobile.css'
     else: return '/static/desktop.css'
 
-app = Flask(__name__)
-Mobility(app)
-
-app.config['ENV'] = 'development'
-app.secret_key = 'thereoncewasashipthatputtosea'
-
 @app.route("/")
 def root(): return redirect(url_for("home"))
 
 @app.route("/home")
 def home():
+    logger = logging.getLogger(__name__)
     if('user' in session and user.exist(session['user'])): 
         e = None
         edusername=user.get.edusername(session['user'])
@@ -181,22 +184,28 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    logger = logging.getLogger(__name__)
     error = None
     if request.method == 'POST':
         username = request.form["username"]
         password = request.form["password"]
         if user.exist(username=username) == True :
-            if user.check.password(username, password) == False : error = 'wrong password'
+            if user.check.password(username, password) == False : 
+                logger.debug(f'{username} typed the wrong password')
+                if user.get.acctlvl(username) == 'admin': logger.warning(f'someone tried to login to {username} with ip: {request.remote_addr}')
+                error = 'wrong password'
         else : error = user.exist(username=username)
         if error == None:
             session['user'] = username
-            return redirect(url_for('settings'))
+            if user.get.acctlvl == 'admin' : logger.info(f'admin user {username} logged in at ip: {request.remote_addr}')
+            return redirect(url_for('home'))
     return render_template('login.html', error=error, css=getcss(request.headers.get('User-Agent')))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    logger = logging.getLogger(__name__)
     error = None
-    requiretoken = True
+    requiretoken = False
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
@@ -206,13 +215,14 @@ def register():
         if (token != "158648234568" ) or not requiretoken: error = 'invalid token'
         elif user.exist(username) == True : error = 'username already exist'
         else:
-            print(f'username={username}, password={password}, edusername={edusername}, edpassword={edpassword}')
+            logger.debug(f'{username} registered with ip: {request.remote_addr}')
             user.add(username=username, password=password, edusername=edusername, edpassword=edpassword)
             return redirect(url_for('login'))
     return render_template('register.html', error=error ,requiretoken=requiretoken, css=getcss(request.headers.get('User-Agent')))
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
+    logger = logging.getLogger(__name__)
     e = None
     if('user' in session and user.exist(session['user'])):
         if request.method == 'POST':
@@ -232,6 +242,7 @@ def settings():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    logger = logging.getLogger(__name__)
     #TODO: add user listing
     #TODO: add accont removal
     #TODO: add account change
@@ -246,6 +257,9 @@ def admin():
 
 @app.route('/logout')
 def logout():
+    logger = logging.getLogger(__name__)
+    username = session['user']
+    logger(f'user {username} logged out')
     session.pop('user')
     return render_template("logout.html", css=getcss(request.headers.get('User-Agent')))
 
@@ -255,4 +269,7 @@ def about():
     return render_template("about.html", css=getcss(request.headers.get('User-Agent')))
 
 if __name__ == "__main__":
-    app.run(port=800, host='m.yapudjusowndomain.fr', debug=True)
+    # now = datetime.datetime.now()
+    logging._defaultFormatter = logging.Formatter(u"%(message)s")
+    logging.basicConfig(filename=f'/root/code/schooltimeremaining/logs/app.log', level=logging.DEBUG,format='[%(asctime)s]: %(name)s:%(levelname)s:%(message)s') # {now.strftime("%d-%m-%Y_%H:%M:%S")}
+    app.run(port=800, host='m.yapudjusowndomain.fr', debug=False)
