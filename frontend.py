@@ -171,15 +171,11 @@ def home():
         e = None
         edusername=user.get.edusername(session['user'])
         edpassword=user.get.edpassword(session['user'])
-        code = test_account(username=edusername, password=edpassword)
         width1, width2, text1, text2 = 0, 0, 'error', 'error'
-        print(code)
-        if code == 200 :
-            currentDateTime = datetime.datetime.now()
-            date = currentDateTime.date()
-            year = date.strftime("%Y")
-            width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))#TODO: make this line run faster (eg: caching)
-        else : e = code 
+        currentDateTime = datetime.datetime.now()
+        date = currentDateTime.date()
+        year = date.strftime("%Y")
+        width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))
         return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
     return redirect(url_for('login'))
 
