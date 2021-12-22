@@ -272,9 +272,10 @@ def admin():
 @app.route('/logout')
 def logout():
     logger = logging.getLogger(__name__)
-    username = session['user']
-    logger.debug(f'user {username} logged out')
-    session.pop('user')
+    if('user' in session and user.exist(session['user'])):
+        username = session['user']
+        logger.debug(f'user {username} logged out')
+        session.pop('user')
     return render_template("logout.html", css=getcss(request.headers.get('User-Agent')))
 
 

@@ -19,10 +19,10 @@ def write_json(new_data, filename):
             return("entry already existed")
 
 def add_cache(username, path, perecntage1, total1, left1, perecntage2, total2, left2, spent2, next_event) :
-    print(f'writing cache for user {username}')
+    # print(f'writing cache for user {username}')
     cache = dict({})
     cache['next_event'] = str(next_event.strftime("%Y-%m-%d %H:%M"))
-    print(cache['next_event'])
+    # print(cache['next_event'])
     cache['percentage1'] = perecntage1
     cache['total1'] = total1
     cache['left1'] = left1
@@ -39,7 +39,7 @@ def add_cache(username, path, perecntage1, total1, left1, perecntage2, total2, l
 def test_token(token, id) :
     randid = str(random.randint(0,999999))
     command = f'curl --location -g -s --request POST \'https://api.ecoledirecte.com/v3/Eleves/{id}/manuelsNumeriques.awp?verbe=get\' --data-raw \'data={{"token": "{token}"}}\' > /root/code/schooltimeremaining/tokens/tests/{randid}.json'
-    print(command)
+    # print(command)
     os.system(command)
     with open('/root/code/schooltimeremaining/tokens/tests/' + randid + '.json') as f:
         test = json.load(f)
@@ -67,7 +67,7 @@ def get_data(username, password):
             if code == 200 :
                 return data
             else :
-                print(code)
+                # print(code)
                 return False
     with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f:
         data = json.load(f)
@@ -96,7 +96,6 @@ def Get_time_table(token, account_type, id, start_date, end_date, username, hole
         "curl -s --location -g -s --request POST \'https://api.ecoledirecte.com/v3/" + str(account_type) + "/" + str(id) + "/emploidutemps.awp?verbe=get\' --data-raw \'data={\"dateDebut\": \"" + str(
             start_date) + "\", \"dateFin\": \"" + str(end_date) + "\", \"avecTrous\": " + str(hole) + ", \"token\": \"" + str(token) + "\"}\' > /tmp/ecoledirecte/timetable" + username + ".json"
     )
-    print(command)
     os.system(command)
     with open('/tmp/ecoledirecte/timetable' + username + '.json') as f:
         timetable = json.load(f)
@@ -112,7 +111,7 @@ def get_bar(username, password, year, ignoreCache = False) :
     """
     if os.path.exists(f'/tmp/schooltiming/cache/{username}.json') and ignoreCache == False :
         with open(f'/tmp/schooltiming/cache/{username}.json') as file: cache = json.load(file)
-        print(f'testing cache for user {username}')
+        # print(f'testing cache for user {username}')
         now = datetime.now()
         next_event = tuple([int(x) for x in str(cache["next_event"])[:10].split('-')])+tuple([int(x) for x in str(cache["next_event"])[11:].split(':')])
         if datetime(*next_event) >= now :
@@ -123,9 +122,9 @@ def get_bar(username, password, year, ignoreCache = False) :
             total2 = strToTimedelta(cache['total2'])
             left2 = strToTimedelta(cache['left2'])
             spent2 = strToTimedelta(cache['spent2'])
-            print(f'using cache for user {username}')
+            # print(f'using cache for user {username}')
             return [percentage1, str(f'{total1-left1} classes out of {total1} ({left1} classes left)\t({percentage1}%)'), percentage2, str(f'{spent2} of class out of {total2} ({left2} of class left)\t({percentage2}%)')]
-    print(f'ignoring cache for user {username}')
+    # print(f'ignoring cache for user {username}')
     year = int(year)
     data = get_data(username=username, password=password)
     if data == False :
