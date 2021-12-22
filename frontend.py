@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, sessions, url_for, session, flash, current_app
-import hashlib, logging, sqlite3, re, datetime
+import hashlib, logging, sqlite3, re, datetime, random
 from urllib.parse import urlparse, urljoin
 from flask_mobility import Mobility
 from getprogress import get_bar
@@ -9,7 +9,7 @@ app = Flask(__name__)
 Mobility(app)
 
 # app.config['ENV'] = 'production'
-# app.secret_key = 'thereoncewasashipthatputtosea'
+app.secret_key = str(random.SystemRandom())
 
 con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
 
