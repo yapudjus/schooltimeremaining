@@ -273,7 +273,7 @@ def admin():
 def logout():
     logger = logging.getLogger(__name__)
     username = session['user']
-    logger(f'user {username} logged out')
+    logger.debug(f'user {username} logged out')
     session.pop('user')
     return render_template("logout.html", css=getcss(request.headers.get('User-Agent')))
 
