@@ -171,7 +171,7 @@ class user :
 
 def ismobile(useragent) :
     MOBILE_REGEX = r'/Mobile|iP(hone|od|ad)|Android|BlackBerry|BB|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/gi'
-    if re.search(pattern=MOBILE_REGEX, string=useragent) != None: return True
+    if re.search(pattern=MOBILE_REGEX, string=str(useragent)) != None: return True
     else: return False
 
 def getcss(useragent) :
