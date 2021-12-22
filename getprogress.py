@@ -1,8 +1,6 @@
 import os, time, json, random, re
 from datetime import datetime, timedelta, date
 
-if not os.path.isdir('/tmp/schooltiming/'):
-    os.system("mkdir /tmp/schooltiming/")
 
 def strToTimedelta(s) :
     days, hours, minutes, seconds = re.match('(?:(\d+) days, )?(\d+):(\d+):([.\d+]+)', s).groups()

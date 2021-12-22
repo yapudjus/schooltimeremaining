@@ -4,6 +4,7 @@ from urllib.parse import urlparse, urljoin
 from flask_mobility import Mobility
 from getprogress import get_bar
 from sqlite3 import Error
+import os
 
 logging._defaultFormatter = logging.Formatter(u"%(message)s")
 logging.basicConfig(filename=f'/root/code/schooltimeremaining/logs/app.log', level=logging.DEBUG,format='[%(asctime)s]: %(name)s:%(levelname)s:%(message)s') # {now.strftime("%d-%m-%Y_%H:%M:%S")}
@@ -13,6 +14,16 @@ Mobility(app)
 
 # app.config['ENV'] = 'production'
 app.secret_key = str(random.SystemRandom())
+
+
+if not os.path.isdir('/tmp/schooltiming/'):
+    os.system("mkdir /tmp/schooltiming/")
+
+if not os.path.isdir('/tmp/schooltiming/cache'):
+    os.system("mkdir /tmp/schooltiming/cache")
+
+if not os.path.isdir('/tmp/ecoledirecte/'):
+    os.system("mkdir /tmp/ecoledirecte/")
 
 con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
 

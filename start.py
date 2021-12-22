@@ -1,2 +1,3 @@
-import os
-if __name__ == '__main__': os.system('gunicorn -w 10 --bind m.yapudjusowndomain.fr:80 app:app')
+import gunicorn
+from app import app
+if __name__ == '__main__': gunicorn -w10 --bindm.yapudjusowndomain.fr:80 app
