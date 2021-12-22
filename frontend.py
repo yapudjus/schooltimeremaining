@@ -263,13 +263,17 @@ def logout():
     session.pop('user')
     return render_template("logout.html", css=getcss(request.headers.get('User-Agent')))
 
-#TODO: add contact page
+
 @app.route('/about')
 def about():
     return render_template("about.html", css=getcss(request.headers.get('User-Agent')))
+
+@app.route('/contact')
+def contact():
+    return render_template("contact.html", css=getcss(request.headers.get('User-Agent')))
 
 if __name__ == "__main__":
     # now = datetime.datetime.now()
     logging._defaultFormatter = logging.Formatter(u"%(message)s")
     logging.basicConfig(filename=f'/root/code/schooltimeremaining/logs/app.log', level=logging.DEBUG,format='[%(asctime)s]: %(name)s:%(levelname)s:%(message)s') # {now.strftime("%d-%m-%Y_%H:%M:%S")}
-    app.run(port=800, host='m.yapudjusowndomain.fr', debug=False)
+    app.run(port=457, host='m.yapudjusowndomain.fr', debug=False)
