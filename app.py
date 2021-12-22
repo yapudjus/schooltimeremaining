@@ -5,6 +5,9 @@ from flask_mobility import Mobility
 from getprogress import get_bar
 from sqlite3 import Error
 
+logging._defaultFormatter = logging.Formatter(u"%(message)s")
+logging.basicConfig(filename=f'/root/code/schooltimeremaining/logs/app.log', level=logging.DEBUG,format='[%(asctime)s]: %(name)s:%(levelname)s:%(message)s') # {now.strftime("%d-%m-%Y_%H:%M:%S")}
+
 app = Flask(__name__)
 Mobility(app)
 
@@ -272,8 +275,9 @@ def about():
 def contact():
     return render_template("contact.html", css=getcss(request.headers.get('User-Agent')))
 
+
+
+
+
 if __name__ == "__main__":
-    # now = datetime.datetime.now()
-    logging._defaultFormatter = logging.Formatter(u"%(message)s")
-    logging.basicConfig(filename=f'/root/code/schooltimeremaining/logs/app.log', level=logging.DEBUG,format='[%(asctime)s]: %(name)s:%(levelname)s:%(message)s') # {now.strftime("%d-%m-%Y_%H:%M:%S")}
-    app.run(port=457, host='m.yapudjusowndomain.fr', debug=False)
+    app.run(port=80, host='m.yapudjusowndomain.fr', debug=False)
