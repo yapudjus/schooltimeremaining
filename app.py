@@ -12,8 +12,7 @@ logging.basicConfig(filename=f'/root/code/schooltimeremaining/logs/app.log', lev
 app = Flask(__name__)
 Mobility(app)
 
-# app.config['ENV'] = 'production'
-app.secret_key = str(random.SystemRandom())
+app.config['ENV'] = 'production'
 
 
 if not os.path.isdir('/tmp/schooltiming/'):
@@ -168,6 +167,8 @@ class user :
     class encode :
         def password(password) :
             return str(hashlib.sha256(password.encode()).hexdigest())
+
+app.secret_key = str(user.get.password('justforthesecretkey'))
 
 def ismobile(useragent) :
     MOBILE_REGEX = r'/Mobile|iP(hone|od|ad)|Android|BlackBerry|BB|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/gi'
