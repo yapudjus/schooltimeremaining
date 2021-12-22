@@ -188,11 +188,14 @@ def home():
         e = None
         edusername=user.get.edusername(session['user'])
         edpassword=user.get.edpassword(session['user'])
-        width1, width2, text1, text2 = 0, 0, 'error', 'error'
+        width1, width2, text1, text2 = 0, 0, 'error, try reloading page', 'error, try reloading page'
         currentDateTime = datetime.datetime.now()
         date = currentDateTime.date()
         year = date.strftime("%Y")
-        width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))
+        try:
+            width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))
+        except ValueError :
+            pass #meh, too bad
         return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
     return redirect(url_for('login'))
 
