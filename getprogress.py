@@ -80,6 +80,8 @@ def test_account(username, password) :
         "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
     )
     with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f: data = json.load(f)
+    if data["code"] == 505 :
+        return 505
     if test_token(data["token"], data["data"]["accounts"][0]["id"]) == 200 :
         return 200
     else :

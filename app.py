@@ -1,8 +1,8 @@
 from flask import Flask, render_template, redirect, request, sessions, url_for, session, flash, current_app
 import hashlib, logging, sqlite3, re, datetime, random
+from getprogress import get_bar, test_account
 from urllib.parse import urlparse, urljoin
 from flask_mobility import Mobility
-from getprogress import get_bar
 from sqlite3 import Error
 import os
 
@@ -188,14 +188,16 @@ def home():
         e = None
         edusername=user.get.edusername(session['user'])
         edpassword=user.get.edpassword(session['user'])
-        width1, width2, text1, text2 = 0, 0, 'error, try reloading page', 'error, try reloading page'
         currentDateTime = datetime.datetime.now()
         date = currentDateTime.date()
         year = date.strftime("%Y")
-        try:
-            width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))
-        except ValueError :
-            pass #meh, too bad
+        width1, width2, text1, text2 = 0, 0, 'login error, try changing password in settings', 'login error, try changing password in settings'
+        if test_account(username=edusername, password=edpassword) == 200 :
+            width1, width2, text1, text2 = 0, 0, 'error, try reloading page', 'error, try reloading page'
+            try:
+                width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))
+            except ValueError :
+                pass #meh, too bad
         return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
     return redirect(url_for('login'))
 
@@ -229,7 +231,7 @@ def register():
         edusername = request.form.get("edusername")
         edpassword = request.form.get("edpassword")
         token = request.form.get("token")
-        if (token != "158648234568" ) or not requiretoken: error = 'invalid token'
+        if (token != "158648234568" ) and requiretoken == True: error = 'invalid token'
         elif user.exist(username) == True : error = 'username already exist'
         else:
             logger.debug(f'{username} registered with ip: {request.remote_addr}')
