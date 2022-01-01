@@ -1,13 +1,15 @@
 <ul>
+    {% if loggedin == True %}
     <li><a href="home">Home</a></li>
+    {% if admin == True%} <li><a href="admin">Admin</a></li> {%endif %}
     <li><a href="settings">Settings</a></li>
+    <li><a href="logout">Logout</a></li>
+    {% else %}
     <li><a href="login">Login</a></li>
     <li><a href="register">Register</a></li>
-    <li><a href="logout">Logout</a></li>
-    <li><a href="admin">Admin</a></li>
+    {%endif %}
     <li><a href="about">About</a></li>
     <li><a href="contact">contact</a></li>
 </ul>
-
 
 {% block content %}{% endblock %}

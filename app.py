@@ -180,10 +180,12 @@ def getcss(useragent) :
     else: return '/static/desktop.css'
 
 @app.route("/")
-def root(): return redirect(url_for("home"))
-
 @app.route("/home")
 def home():
+    loggedin, admin = False, False
+    if('user' in session and user.exist(session['user'])):
+        loggedin = True
+        if user.get.acctlvl(session['user']) == 'admin' : admin = True
     logger = logging.getLogger(__name__)
     if('user' in session and user.exist(session['user'])): 
         e = None
@@ -200,11 +202,15 @@ def home():
                 width1, text1, width2, text2 = get_bar(username=edusername, password=edpassword, year=int(year))
             except ValueError :
                 pass #meh, too bad
-        return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
+        return render_template('home.html', width1=width1, width2=width2, text1=text1, text2=text2, error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    loggedin, admin = False, False
+    if('user' in session and user.exist(session['user'])):
+        loggedin = True
+        if user.get.acctlvl(session['user']) == 'admin' : admin = True
     logger = logging.getLogger(__name__)
     error = None
     if request.method == 'POST':
@@ -222,10 +228,14 @@ def login():
             XRealIp = request.headers['X-Real-Ip']
             if user.get.acctlvl == 'admin' : logger.info(f'admin user {username} logged in at ip: {XRealIp}')
             return redirect(url_for('home'))
-    return render_template('login.html', error=error, css=getcss(request.headers.get('User-Agent')))
+    return render_template('login.html', error=error, css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    loggedin, admin = False, False
+    if('user' in session and user.exist(session['user'])):
+        loggedin = True
+        if user.get.acctlvl(session['user']) == 'admin' : admin = True
     logger = logging.getLogger(__name__)
     error = None
     requiretoken = False
@@ -242,10 +252,14 @@ def register():
             logger.debug(f'{username} registered with ip: {XRealIp}')
             user.add(username=username, password=password, edusername=edusername, edpassword=edpassword)
             return redirect(url_for('login'))
-    return render_template('register.html', error=error ,requiretoken=requiretoken, css=getcss(request.headers.get('User-Agent')))
+    return render_template('register.html', error=error ,requiretoken=requiretoken, css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
+    loggedin, admin = False, False
+    if('user' in session and user.exist(session['user'])):
+        loggedin = True
+        if user.get.acctlvl(session['user']) == 'admin' : admin = True
     logger = logging.getLogger(__name__)
     e = None
     if('user' in session and user.exist(session['user'])):
@@ -261,11 +275,15 @@ def settings():
             if 'edchange' in request.form:
                 if 'edusername' in request.form : e= user.change.edusername(username=session['user'], password=password, edusername=edusername)
                 if 'edpassword' in request.form : e= user.change.edpassword(username=session['user'], password=password, edpassword=edpassword)
-        return render_template("settings.html", error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
-    return render_template("loginerror.html", css=getcss(request.headers.get('User-Agent')))
+        return render_template("settings.html", error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
+    return render_template("loginerror.html", css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    loggedin, admin = False, False
+    if('user' in session and user.exist(session['user'])):
+        loggedin = True
+        if user.get.acctlvl(session['user']) == 'admin' : admin = True
     logger = logging.getLogger(__name__)
     #TODO: add user listing
     #TODO: add accont removal
@@ -275,9 +293,9 @@ def admin():
         if user.get.acctlvl(session['user']) == 'admin' :
             if request.method == 'POST':
                 if 'adduser' in request.form: user.add(username=request.form.get('adusername'), password=request.form.get('adpassword'), edusername=request.form.get('adedusername'), edpassword=request.form.get('adedpassword'), acctlvl=request.form.get('dropdown'))
-            return render_template("admin.html", error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')))
-        return render_template("unauthorized.html", loggedas=session['user'], acctlvl=user.get.acctlvl(session['user']), required='admin', css=getcss(request.headers.get('User-Agent')))
-    return render_template("loginerror.html", css=getcss(request.headers.get('User-Agent')))
+            return render_template("admin.html", error=e, loggedas=session['user'], css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
+        return render_template("unauthorized.html", loggedas=session['user'], acctlvl=user.get.acctlvl(session['user']), required='admin', css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
+    return render_template("loginerror.html", css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
 
 @app.route('/logout')
 def logout():
@@ -291,11 +309,19 @@ def logout():
 
 @app.route('/about')
 def about():
-    return render_template("about.html", css=getcss(request.headers.get('User-Agent')))
+    loggedin, admin = False, False
+    if('user' in session and user.exist(session['user'])):
+        loggedin = True
+        if user.get.acctlvl(session['user']) == 'admin' : admin = True
+    return render_template("about.html", css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
 
 @app.route('/contact')
 def contact():
-    return render_template("contact.html", css=getcss(request.headers.get('User-Agent')))
+    loggedin, admin = False, False
+    if('user' in session and user.exist(session['user'])):
+        loggedin = True
+        if user.get.acctlvl(session['user']) == 'admin' : admin = True
+    return render_template("contact.html", css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
 
 
 
