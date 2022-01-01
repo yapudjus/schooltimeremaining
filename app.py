@@ -213,12 +213,14 @@ def login():
         if user.exist(username=username) == True :
             if user.check.password(username, password) == False : 
                 logger.debug(f'{username} typed the wrong password')
-                if user.get.acctlvl(username) == 'admin': logger.warning(f'someone tried to login to {username} with ip: {request.remote_addr}')
+                XRealIp = request.headers['X-Real-Ip']
+                if user.get.acctlvl(username) == 'admin': logger.warning(f'someone tried to login to {username} with ip: {XRealIp}')
                 error = 'wrong password'
         else : error = user.exist(username=username)
         if error == None:
             session['user'] = username
-            if user.get.acctlvl == 'admin' : logger.info(f'admin user {username} logged in at ip: {request.remote_addr}')
+            XRealIp = request.headers['X-Real-Ip']
+            if user.get.acctlvl == 'admin' : logger.info(f'admin user {username} logged in at ip: {XRealIp}')
             return redirect(url_for('home'))
     return render_template('login.html', error=error, css=getcss(request.headers.get('User-Agent')))
 
@@ -236,7 +238,8 @@ def register():
         if (token != "158648234568" ) and requiretoken == True: error = 'invalid token'
         elif user.exist(username) == True : error = 'username already exist'
         else:
-            logger.debug(f'{username} registered with ip: {request.remote_addr}')
+            XRealIp = request.headers['X-Real-Ip']
+            logger.debug(f'{username} registered with ip: {XRealIp}')
             user.add(username=username, password=password, edusername=edusername, edpassword=edpassword)
             return redirect(url_for('login'))
     return render_template('register.html', error=error ,requiretoken=requiretoken, css=getcss(request.headers.get('User-Agent')))
