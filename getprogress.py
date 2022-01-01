@@ -96,10 +96,11 @@ def test_account(username, password) :
 def Get_time_table(token, account_type, id, start_date, end_date, username, hole='false'):
     command = (
         "curl -s --location -g -s --request POST \'https://api.ecoledirecte.com/v3/" + str(account_type) + "/" + str(id) + "/emploidutemps.awp?verbe=get\' --data-raw \'data={\"dateDebut\": \"" + str(
-            start_date) + "\", \"dateFin\": \"" + str(end_date) + "\", \"avecTrous\": " + str(hole) + ", \"token\": \"" + str(token) + "\"}\' > /tmp/ecoledirecte/timetable" + username + ".json"
+            start_date) + "\", \"dateFin\": \"" + str(end_date) + "\", \"avecTrous\": " + str(hole) + ", \"token\": \"" + str(token) + "\"}\' > /root/code/schooltimeremaining/tokens/tmp/ecoledirecte/timetable" + username + ".json"
     )
+    print(command)
     os.system(command)
-    with open('/tmp/ecoledirecte/timetable' + username + '.json') as f:
+    with open('/root/code/schooltimeremaining/tokens/tmp/ecoledirecte/timetable' + username + '.json') as f:
         timetable = json.load(f)
     return timetable
 
@@ -111,8 +112,8 @@ def get_bar(username, password, year, ignoreCache = False) :
         password    - Required  : Ecoledirecte password (Str)
         year        - Required  : start of school year (ex: for 2021-2022, enter 2021) (Int)
     """
-    if os.path.exists(f'/tmp/schooltiming/cache/{username}.json') and ignoreCache == False :
-        with open(f'/tmp/schooltiming/cache/{username}.json') as file: cache = json.load(file)
+    if os.path.exists(f'/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache/{username}.json') and ignoreCache == False :
+        with open(f'/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache/{username}.json') as file: cache = json.load(file)
         # print(f'testing cache for user {username}')
         now = datetime.now()
         next_event = tuple([int(x) for x in str(cache["next_event"])[:10].split('-')])+tuple([int(x) for x in str(cache["next_event"])[11:].split(':')])
@@ -155,7 +156,10 @@ def get_bar(username, password, year, ignoreCache = False) :
                 total1 += 1
     # return(f'{total-left} of class spent out of {total} ({left} left)')
     spent2 = total2-left2
-    percentage1 = ((total1-left1) / total1) * 100
-    percentage2 = (spent2.total_seconds() / (total2.total_seconds())) * 100
-    add_cache(username=username, path=f'/tmp/schooltiming/cache/{username}.json', perecntage1=percentage1, perecntage2=percentage2, total1=total1, total2=total2, left1=left1, left2=left2, spent2=spent2, next_event=next_event)
+    try :
+        percentage1 = ((total1-left1) / total1) * 100
+        percentage2 = (spent2.total_seconds() / (total2.total_seconds())) * 100
+    except ZeroDivisionError :
+        percentage1, percentage2 = 0, 0
+    add_cache(username=username, path=f'/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache/{username}.json', perecntage1=percentage1, perecntage2=percentage2, total1=total1, total2=total2, left1=left1, left2=left2, spent2=spent2, next_event=next_event)
     return [percentage1, str(f'{total1-left1} classes out of {total1} ({left1} classes left)\t({percentage1}%)'), percentage2, str(f'{spent2} of class out of {total2} ({left2} of class left)\t({percentage2}%)')]

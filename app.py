@@ -15,14 +15,14 @@ Mobility(app)
 app.config['ENV'] = 'production'
 
 
-if not os.path.isdir('/tmp/schooltiming/'):
-    os.system("mkdir /tmp/schooltiming/")
+if not os.path.isdir('/root/code/schooltimeremaining/tokens/tmp/schooltiming/'):
+    os.system("mkdir /root/code/schooltimeremaining/tokens/tmp/schooltiming/")
 
-if not os.path.isdir('/tmp/schooltiming/cache'):
-    os.system("mkdir /tmp/schooltiming/cache")
+if not os.path.isdir('/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache'):
+    os.system("mkdir /root/code/schooltimeremaining/tokens/tmp/schooltiming/cache")
 
-if not os.path.isdir('/tmp/ecoledirecte/'):
-    os.system("mkdir /tmp/ecoledirecte/")
+if not os.path.isdir('/root/code/schooltimeremaining/tokens/tmp/ecoledirecte/'):
+    os.system("mkdir /root/code/schooltimeremaining/tokens/tmp/ecoledirecte/")
 
 con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
 
@@ -192,6 +192,7 @@ def home():
         currentDateTime = datetime.datetime.now()
         date = currentDateTime.date()
         year = date.strftime("%Y")
+        if int(date.strftime("%m")) < 9: year = str(int(year)-1)
         width1, width2, text1, text2 = 0, 0, 'login error, try changing password in settings', 'login error, try changing password in settings'
         if test_account(username=edusername, password=edpassword) == 200 :
             width1, width2, text1, text2 = 0, 0, 'error, try reloading page', 'error, try reloading page'
