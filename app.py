@@ -30,7 +30,6 @@ def sql_connection():
     logger = logging.getLogger(__name__)
     try:
         con = sqlite3.connect(':memory:')
-        logger.info("Connection is established: Database is created in memory")
     except Error as e:
         logger.error(Error)
     finally:
