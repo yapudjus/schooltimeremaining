@@ -1,30 +1,30 @@
 from flask import Flask, render_template, redirect, request, sessions, url_for, session, flash, current_app
-import hashlib, logging, sqlite3, re, datetime, random
+import hashlib, logging, sqlite3, re, datetime
 from getprogress import get_bar, test_account
 from urllib.parse import urlparse, urljoin
 from flask_mobility import Mobility
 from sqlite3 import Error
 import os
 
+path = '/home/yapudjus/Documents/code/schooltimeremaining'
 logging._defaultFormatter = logging.Formatter(u"%(message)s")
-logging.basicConfig(filename=f'/root/code/schooltimeremaining/logs/app.log', level=logging.DEBUG,format='[%(asctime)s]: %(name)s:%(levelname)s:%(message)s') # {now.strftime("%d-%m-%Y_%H:%M:%S")}
+logging.basicConfig(filename=f'{path}/logs/app.log', level=logging.DEBUG,format='[%(asctime)s]: %(name)s:%(levelname)s:%(message)s') # {now.strftime("%d-%m-%Y_%H:%M:%S")}
 
 app = Flask(__name__)
 Mobility(app)
 
-app.config['ENV'] = 'production'
+# app.config['ENV'] = 'production'
 
-
-if not os.path.isdir('/root/code/schooltimeremaining/tokens/tmp/schooltiming/'):
+if not os.path.isdir(f'{path}/tokens/tmp/schooltiming/'):
     os.system("mkdir /root/code/schooltimeremaining/tokens/tmp/schooltiming/")
 
-if not os.path.isdir('/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache'):
+if not os.path.isdir(f'{path}/tokens/tmp/schooltiming/cache'):
     os.system("mkdir /root/code/schooltimeremaining/tokens/tmp/schooltiming/cache")
 
-if not os.path.isdir('/root/code/schooltimeremaining/tokens/tmp/ecoledirecte/'):
+if not os.path.isdir(f'{path}/tokens/tmp/ecoledirecte/'):
     os.system("mkdir /root/code/schooltimeremaining/tokens/tmp/ecoledirecte/")
 
-con = sqlite3.connect('/root/code/schooltimeremaining/data.db', check_same_thread=False)
+con = sqlite3.connect(f'{path}/data.db', check_same_thread=False)
 
 def sql_connection():
     logger = logging.getLogger(__name__)
@@ -218,13 +218,19 @@ def login():
         if user.exist(username=username) == True :
             if user.check.password(username, password) == False : 
                 logger.debug(f'{username} typed the wrong password')
-                XRealIp = request.headers['X-Real-Ip']
+                try: 
+                    XRealIp = request.headers['X-Real-Ip'] 
+                except: 
+                    XRealIp = 'localhost'
                 if user.get.acctlvl(username) == 'admin': logger.warning(f'someone tried to login to {username} with ip: {XRealIp}')
                 error = 'wrong password'
         else : error = user.exist(username=username)
         if error == None:
             session['user'] = username
-            XRealIp = request.headers['X-Real-Ip']
+            try: 
+                XRealIp = request.headers['X-Real-Ip'] 
+            except: 
+                XRealIp = 'localhost'
             if user.get.acctlvl == 'admin' : logger.info(f'admin user {username} logged in at ip: {XRealIp}')
             return redirect(url_for('home'))
     return render_template('login.html', error=error, css=getcss(request.headers.get('User-Agent')), loggedin=loggedin, admin=admin)
@@ -247,7 +253,10 @@ def register():
         if (token != "158648234568" ) and requiretoken == True: error = 'invalid token'
         elif user.exist(username) == True : error = 'username already exist'
         else:
-            XRealIp = request.headers['X-Real-Ip']
+            try: 
+                XRealIp = request.headers['X-Real-Ip'] 
+            except: 
+                XRealIp = 'localhost'
             logger.debug(f'{username} registered with ip: {XRealIp}')
             user.add(username=username, password=password, edusername=edusername, edpassword=edpassword)
             return redirect(url_for('login'))
@@ -327,4 +336,4 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(port=80, host='m.yapudjusowndomain.fr', debug=False)
+    app.run(port=8080, host='0.0.0.0', debug=True)

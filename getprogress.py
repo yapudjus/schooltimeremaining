@@ -1,6 +1,7 @@
 import os, time, json, random, re
 from datetime import datetime, timedelta, date
 
+filepath = '/home/yapudjus/Documents/code/schooltimeremaining'
 
 def strToTimedelta(s) :
     days, hours, minutes, seconds = re.match('(?:(\d+) days, )?(\d+):(\d+):([.\d+]+)', s).groups()
@@ -38,30 +39,26 @@ def add_cache(username, path, perecntage1, total1, left1, perecntage2, total2, l
 
 def test_token(token, id) :
     randid = str(random.randint(0,999999))
-    command = f'curl --location -g -s --request POST \'https://api.ecoledirecte.com/v3/Eleves/{id}/manuelsNumeriques.awp?verbe=get\' --data-raw \'data={{"token": "{token}"}}\' > /root/code/schooltimeremaining/tokens/tests/{randid}.json'
+    command = f'curl --location -g -s --request POST \'https://api.ecoledirecte.com/v3/Eleves/{id}/manuelsNumeriques.awp?verbe=get\' --data-raw \'data={{"token": "{token}"}}\' > {filepath}/tokens/tests/{randid}.json'
     # print(command)
     os.system(command)
-    with open('/root/code/schooltimeremaining/tokens/tests/' + randid + '.json') as f:
+    with open(f'{filepath}/tokens/tests/{randid}.json') as f:
         test = json.load(f)
     return test["code"]
 
 def get_data(username, password):
-    if not os.path.isfile("/root/code/schooltimeremaining/tokens/data" + username + ".json") :
+    if not os.path.isfile(f"{filepath}/tokens/data{username}.json") :
         os.system(
-            "curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={\"identifiant\": \"" +
-            username + "\", \"motdepasse\": \"" + password +
-            "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
+            f"curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={{\"identifiant\": \"{username}\", \"motdepasse\": \"{password}\"}}\' > {filepath}/tokens/data{username}.json"
         )
     else :
-        with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f:
+        with open(f'{filepath}/tokens/data{username}.json') as f:
             data = json.load(f)
         if test_token(data["token"], data["data"]["accounts"][0]["id"]) == 200 :
             return data
         else :
             os.system(
-                "curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={\"identifiant\": \"" +
-                username + "\", \"motdepasse\": \"" + password +
-                "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
+                f"curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={{\"identifiant\": \"{username}\", \"motdepasse\": \"{password}\"}}\' > {filepath}/tokens/data{username}.json"
             )
             code = test_token(data["token"], data["data"]["accounts"][0]["id"])
             if code == 200 :
@@ -69,38 +66,33 @@ def get_data(username, password):
             else :
                 # print(code)
                 return False
-    with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f:
+    with open(f'{filepath}/tokens/data{username}.json') as f:
         data = json.load(f)
     return data
 
 def test_account(username, password) :
     os.system(
-        "curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={\"identifiant\": \"" +
-        username + "\", \"motdepasse\": \"" + password +
-        "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
+        f"curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={{\"identifiant\": \"{username}\", \"motdepasse\": \"{password}\"}}\' > {filepath}/tokens/data{username}.json"
     )
-    with open('/root/code/schooltimeremaining/tokens/data' + username + '.json') as f: data = json.load(f)
+    with open(f'{filepath}/tokens/data{username}.json') as f: data = json.load(f)
     if data["code"] == 505 :
         return 505
     if test_token(data["token"], data["data"]["accounts"][0]["id"]) == 200 :
         return 200
     else :
         os.system(
-            "curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={\"identifiant\": \"" +
-            username + "\", \"motdepasse\": \"" + password +
-            "\"}\' > /root/code/schooltimeremaining/tokens/data" + username + ".json"
+            f"curl -s --location --request POST \'https://api.ecoledirecte.com/v3/login.awp\' --data-raw \'data={{\"identifiant\": \"{username}\", \"motdepasse\": \"{password}\"}}\' > {filepath}/tokens/data{username}.json"
         )
         code = test_token(data["token"])
         return code
 
 def Get_time_table(token, account_type, id, start_date, end_date, username, hole='false'):
     command = (
-        "curl -s --location -g -s --request POST \'https://api.ecoledirecte.com/v3/" + str(account_type) + "/" + str(id) + "/emploidutemps.awp?verbe=get\' --data-raw \'data={\"dateDebut\": \"" + str(
-            start_date) + "\", \"dateFin\": \"" + str(end_date) + "\", \"avecTrous\": " + str(hole) + ", \"token\": \"" + str(token) + "\"}\' > /root/code/schooltimeremaining/tokens/tmp/ecoledirecte/timetable" + username + ".json"
+        f"curl -s --location -g -s --request POST \'https://api.ecoledirecte.com/v3/{account_type}/{id}/emploidutemps.awp?verbe=get\' --data-raw \'data={{\"dateDebut\": \"{start_date}\", \"dateFin\": \"{end_date}\", \"avecTrous\": {hole}, \"token\": \"{token}\"}}\' > {filepath}/tokens/tmp/ecoledirecte/timetable{username}.json"
     )
     print(command)
     os.system(command)
-    with open('/root/code/schooltimeremaining/tokens/tmp/ecoledirecte/timetable' + username + '.json') as f:
+    with open(f'{filepath}/tokens/tmp/ecoledirecte/timetable{username}.json') as f:
         timetable = json.load(f)
     return timetable
 
@@ -112,12 +104,13 @@ def get_bar(username, password, year, ignoreCache = False) :
         password    - Required  : Ecoledirecte password (Str)
         year        - Required  : start of school year (ex: for 2021-2022, enter 2021) (Int)
     """
-    if os.path.exists(f'/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache/{username}.json') and ignoreCache == False :
-        with open(f'/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache/{username}.json') as file: cache = json.load(file)
+    if os.path.exists(f'{filepath}/tokens/tmp/schooltiming/cache/{username}.json') and ignoreCache == False :
+        with open(f'{filepath}/tokens/tmp/schooltiming/cache/{username}.json') as file: cache = json.load(file)
         # print(f'testing cache for user {username}')
         now = datetime.now()
         next_event = tuple([int(x) for x in str(cache["next_event"])[:10].split('-')])+tuple([int(x) for x in str(cache["next_event"])[11:].split(':')])
-        if datetime(*next_event) >= now :
+        print(datetime(*next_event), now)
+        if datetime(*next_event) <= now :
             percentage1 = cache['percentage1']
             total1 = cache['total1']
             left1 = cache['left1']
@@ -132,8 +125,8 @@ def get_bar(username, password, year, ignoreCache = False) :
     data = get_data(username=username, password=password)
     if data == False :
         return 'Bad login'
-    start = str(year) + '-09-01'
-    end = str(year + 1) + '-08-01'
+    start = f'{year}-09-01'
+    end = f'{year + 1}-08-01'
     table = Get_time_table(token=data["token"], account_type=data["data"]["accounts"][0]['typeCompte'], id=data["data"]["accounts"][0]['id'], start_date=start, end_date=end, username=username)
     total1 = 0
     total2 = timedelta()
@@ -161,5 +154,5 @@ def get_bar(username, password, year, ignoreCache = False) :
         percentage2 = (spent2.total_seconds() / (total2.total_seconds())) * 100
     except ZeroDivisionError :
         percentage1, percentage2 = 0, 0
-    add_cache(username=username, path=f'/root/code/schooltimeremaining/tokens/tmp/schooltiming/cache/{username}.json', perecntage1=percentage1, perecntage2=percentage2, total1=total1, total2=total2, left1=left1, left2=left2, spent2=spent2, next_event=next_event)
+    add_cache(username=username, path=f'{filepath}/tokens/tmp/schooltiming/cache/{username}.json', perecntage1=percentage1, perecntage2=percentage2, total1=total1, total2=total2, left1=left1, left2=left2, spent2=spent2, next_event=next_event)
     return [percentage1, str(f'{total1-left1} classes out of {total1} ({left1} classes left)\t({percentage1}%)'), percentage2, str(f'{spent2} of class out of {total2} ({left2} of class left)\t({percentage2}%)')]
